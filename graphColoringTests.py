@@ -4,11 +4,6 @@ import genetic
 
 
 def load_data(localFileName):
-    """ expects: T D1 [D2 ... DN]
-    where T is the record type
-    and D1 .. DN are record-type appropriate data elements
-    """
-
     rules = set()
     nodes = set()
     with open(localFileName, mode='r') as infile:
@@ -26,26 +21,9 @@ def load_data(localFileName):
     return rules, nodes
 
 
-def build_rules(items):
-    rulesAdded = {}
-    for state, adjacent in items.items():
-        for adjacentState in adjacent:
-            if adjacentState == '':
-                continue
-            rule = Rule(state, adjacentState)
-            if rule in rulesAdded:
-                rulesAdded[rule] += 1
-            else:
-                rulesAdded[rule] = 1
-    for k, v in rulesAdded.items():
-        if v != 2:
-            print("rule {0} is not bidirectional".format(k))
-    return rulesAdded.keys()
-
-
 def get_fitness(genes, rules, stateIndexLookup):
     rulesThatPass = sum(1 for rule in rules
-                        if rule.IsValid(genes, stateIndexLookup))
+                        if rule.isValid(genes, stateIndexLookup))
     return rulesThatPass
 
 
@@ -66,9 +44,6 @@ class GraphColoringTests(unittest.TestCase):
     def test_R100_1gb(self):
         self.color("R100_1gb.col",
                    ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo"])
-
-    def test_benchmark(self):
-        genetic.Benchmark.run(lambda: self.test_R100_1gb())
 
     def color(self, file, colors):
         rules, nodes = load_data(file)
@@ -114,7 +89,8 @@ class Rule:
     def __str__(self):
         return self.Node + " -> " + self.Adjacent
 
-    def IsValid(self, genes, nodeIndexLookup):
+    # Verify if genes from 2 adjacent nodes are identical (colored with the same color)
+    def isValid(self, genes, nodeIndexLookup):
         index = nodeIndexLookup[self.Node]
         adjacentStateIndex = nodeIndexLookup[self.Adjacent]
 

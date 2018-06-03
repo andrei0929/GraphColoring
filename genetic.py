@@ -42,6 +42,18 @@ def _mutate(parent, geneSet, get_fitness):
 
 
 def get_best(get_fitness, targetLen, optimalFitness, geneSet, display):
+    """
+
+    Function which computes the best child which is of optimalFitness
+    using repeated generation and mutation of an initial guess
+
+    :param get_fitness: fitness function
+    :param targetLen: number of genes to use when creating a new gene sequence
+    :param optimalFitness: optimal fitness value
+    :param geneSet: set of possible genes
+    :param display: display function
+    :return: best child with fitness value equal to optimalFitness
+    """
     random.seed()
 
     def fnMutate(parent):
@@ -83,22 +95,3 @@ class Chromosome:
     def __init__(self, genes, fitness):
         self.Genes = genes
         self.Fitness = fitness
-
-
-class Benchmark:
-    @staticmethod
-    def run(function):
-        timings = []
-        stdout = sys.stdout
-        for i in range(100):
-            sys.stdout = None
-            startTime = time.time()
-            function()
-            seconds = time.time() - startTime
-            sys.stdout = stdout
-            timings.append(seconds)
-            mean = statistics.mean(timings)
-            if i < 10 or i % 10 == 9:
-                print("{} {:3.2f} {:3.2f}".format(
-                    1 + i, mean,
-                    statistics.stdev(timings, mean) if i > 1 else 0))
