@@ -1,3 +1,4 @@
+import random
 import unittest
 import datetime
 import genetic
@@ -35,6 +36,16 @@ def display(candidate, startTime):
         str(timeDiff)))
 
 
+def mutate(genes, geneset):
+    # mutate between 1 and 4 genes
+    count = random.randint(1, 4)
+    while count > 0:
+        indexA = random.randrange(0, len(genes))
+        indexNewGeneA = random.randrange(0, len(geneset))
+        genes[indexA] = geneset[indexNewGeneA]
+        count -= 1
+
+
 class GraphColoringTests(unittest.TestCase):
 
     def test_states(self):
@@ -60,8 +71,11 @@ class GraphColoringTests(unittest.TestCase):
         def fnGetFitness(genes):
             return get_fitness(genes, rules, nodeIndexLookup)
 
+        def fnMutate(genes):
+            mutate(genes, geneset)
+
         best = genetic.get_best(fnGetFitness, len(nodes),
-                                optimalValue, geneset, fnDisplay)
+                                optimalValue, geneset, fnDisplay, custom_mutate=fnMutate)
         self.assertTrue(not optimalValue > best.Fitness)
 
         keys = sorted(nodes)

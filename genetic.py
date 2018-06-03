@@ -41,7 +41,24 @@ def _mutate(parent, geneSet, get_fitness):
     return Chromosome(childGenes, fitness)
 
 
-def get_best(get_fitness, targetLen, optimalFitness, geneSet, display):
+def _mutate_custom(parent, custom_mutate, get_fitness):
+    """
+
+    Perform a custom mutation on the parent's genes
+
+    :param parent: parent who's genes will be mutated
+    :param custom_mutate: function which computes how the custom mutation is performed
+    :param get_fitness: fitness function
+    :return: child with custom mutated genes from parent
+    """
+    childGenes = parent.Genes[:]
+    custom_mutate(childGenes)
+    fitness = get_fitness(childGenes)
+    return Chromosome(childGenes, fitness)
+
+
+def get_best(get_fitness, targetLen, optimalFitness, geneSet, display,
+             custom_mutate=None):
     """
 
     Function which computes the best child which is of optimalFitness
@@ -52,12 +69,15 @@ def get_best(get_fitness, targetLen, optimalFitness, geneSet, display):
     :param optimalFitness: optimal fitness value
     :param geneSet: set of possible genes
     :param display: display function
+    :param custom_mutate: custom mutation function
     :return: best child with fitness value equal to optimalFitness
     """
-    random.seed()
-
-    def fnMutate(parent):
-        return _mutate(parent, geneSet, get_fitness)
+    if custom_mutate is None:
+        def fnMutate(parent):
+            return _mutate(parent, geneSet, get_fitness)
+    else:
+        def fnMutate(parent):
+            return _mutate_custom(parent, custom_mutate, get_fitness)
 
     def fnGenerateParent():
         return _generate_parent(targetLen, geneSet, get_fitness)
