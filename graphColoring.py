@@ -85,6 +85,10 @@ class GraphColoringTests(unittest.TestCase):
         self.color("R100_1gb.col",
                    ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo"])
 
+    def test_r250(self):
+        self.color("r250_5.col",
+                   ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo"])
+
     def color(self, file, colors):
         rules, nodes = load_data(file)
         optimalValue = len(rules)
